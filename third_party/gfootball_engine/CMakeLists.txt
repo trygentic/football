@@ -67,6 +67,10 @@ include_directories(${SDL2_GFX_DIRS})
 
 if(UNIX)
   if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.12")
+    # PATCH (agentloop): force conda Python on macOS instead of the system
+    # framework, so boost-python version (python310) matches.
+    set(Python_FIND_FRAMEWORK NEVER)
+    set(Python_FIND_STRATEGY LOCATION)
     find_package(Python COMPONENTS Development REQUIRED)
   else()
     # Starting from CMake 3.12 FindPythonLibs was deprecated in favour of FindPython.

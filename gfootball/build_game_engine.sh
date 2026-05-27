@@ -26,5 +26,21 @@ PARALLELISM=$(python3 -c 'import psutil; import multiprocessing as mp; print(int
 
 # Delete pre-existing version of CMakeCache.txt to make 'python3 -m pip install' work.
 rm -f third_party/gfootball_engine/CMakeCache.txt
-pushd third_party/gfootball_engine && cmake . && make -j $PARALLELISM && popd
+PYTHON_EXE="${GFOOTBALL_PYTHON:-/Users/troyedwards/dev/agentloop/packages/grf-trainer/.conda/bin/python}"
+PYTHON_PREFIX="$("$PYTHON_EXE" -c 'import sys; print(sys.prefix)')"
+echo "[patched build] Using PYTHON_EXE=$PYTHON_EXE PYTHON_PREFIX=$PYTHON_PREFIX"
+pushd third_party/gfootball_engine && cmake . \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+    -DCMAKE_FIND_FRAMEWORK=LAST \
+    -DPython_FIND_FRAMEWORK=NEVER \
+    -DPython3_FIND_FRAMEWORK=NEVER \
+    -DBoost_NO_BOOST_CMAKE=ON \
+    -DBoost_USE_STATIC_LIBS=OFF \
+    -DBOOST_ROOT="$PYTHON_PREFIX" \
+    -DPython_EXECUTABLE="$PYTHON_EXE" \
+    -DPython3_EXECUTABLE="$PYTHON_EXE" \
+    -DPython_ROOT_DIR="$PYTHON_PREFIX" \
+    -DPython3_ROOT_DIR="$PYTHON_PREFIX" \
+    -DCMAKE_PREFIX_PATH="$PYTHON_PREFIX" \
+    && make -j $PARALLELISM && popd
 pushd third_party/gfootball_engine && ln -sf libgame.$LIB_EXTENSION _gameplayfootball.so && popd
