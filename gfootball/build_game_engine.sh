@@ -41,6 +41,7 @@ pushd third_party/gfootball_engine && cmake . \
     -DPython3_EXECUTABLE="$PYTHON_EXE" \
     -DPython_ROOT_DIR="$PYTHON_PREFIX" \
     -DPython3_ROOT_DIR="$PYTHON_PREFIX" \
-    -DCMAKE_PREFIX_PATH="$PYTHON_PREFIX" \
+    -DCMAKE_PREFIX_PATH="/opt/homebrew;$PYTHON_PREFIX" \
+    -DSDL2_DIR=/opt/homebrew/lib/cmake/SDL2 \
     && make -j $PARALLELISM && popd
 pushd third_party/gfootball_engine && ln -sf libgame.$LIB_EXTENSION _gameplayfootball.so && popd
