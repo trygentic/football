@@ -81,7 +81,17 @@ void OpenGLRenderer3D::SwapBuffers() {
   DO_VALIDATION;
   last_screen_.resize(context_width * context_height * 3);
   if (window) {
+    // agentloop: force GL to flush all pending work before swap.
+    // On macOS/Apple Silicon, without this, SDL_GL_SwapWindow can
+    // return before the back buffer is fully populated, presenting
+    // an empty front buffer to Cocoa (visible black window).
+    mapping.glFinish();
     SDL_GL_SwapWindow(window);
+    // agentloop: pump the SDL event queue so Cocoa actually flushes
+    // the swapped framebuffer to the on-screen NSView. Without this
+    // the swap chain can stall on macOS — the OS never "sees" that
+    // the window was redrawn.
+    SDL_PumpEvents();
   }
   mapping.glReadPixels(0, 0, context_width, context_height, GL_RGB, GL_UNSIGNED_BYTE,
                        &last_screen_[0]);
