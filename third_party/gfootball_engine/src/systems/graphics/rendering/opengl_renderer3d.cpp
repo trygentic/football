@@ -390,9 +390,14 @@ void OpenGLRenderer3D::CreateContextSdl() {
   SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);  // DISABLED?
 
 #ifdef __APPLE__
+  // agentloop: macOS requires FORWARD_COMPATIBLE for GL 3.2+ core to
+  // actually deliver a clean context. Without it Apple Silicon yields a
+  // hybrid context where samplers on units > 0 fail to bind, producing
+  // "GLD_TEXTURE_INDEX_2D unloadable" and a pure-black window.
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
 #endif
 
   window = SDL_CreateWindow("Google Research Football", SDL_WINDOWPOS_UNDEFINED,
