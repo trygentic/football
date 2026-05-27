@@ -37,6 +37,11 @@ flags.DEFINE_enum('action_set', 'default', ['default', 'full'], 'Action set')
 flags.DEFINE_bool('real_time', True,
                   'If true, environment will slow down so humans can play.')
 flags.DEFINE_bool('render', True, 'Whether to do game rendering.')
+flags.DEFINE_integer('physics_steps_per_frame', 10,
+                     'Number of physics ticks simulated per rendered frame. '
+                     'Lower = slower wall-clock pacing for a given real_time '
+                     'target FPS. Default 10. Try 4 for natural pacing when '
+                     'real_time=True.')
 
 
 def main(_):
@@ -48,6 +53,7 @@ def main(_):
       'dump_full_episodes': True,
       'players': players,
       'real_time': FLAGS.real_time,
+      'physics_steps_per_frame': FLAGS.physics_steps_per_frame,
   }
   if FLAGS.level:
     cfg_values['level'] = FLAGS.level

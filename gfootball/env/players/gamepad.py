@@ -43,11 +43,13 @@ class Player(controller_base.Controller):
     controller_base.Controller.__init__(self, player_config, env_config)
     self._can_play_right = True
     pygame.init()
-    self._index = player_config['player_gamepad']
+    # agentloop: cast to int — play_game passes player_gamepad as a string
+    # via flag parsing, but pygame.joystick APIs need an int index.
+    self._index = int(player_config['player_gamepad'])
     event_queue.add_controller('gamepad', self._index)
     pygame.joystick.init()
-    if pygame.joystick.get_count() < self._index:
-      logging.error("You need %d physical controller(s) connected" % self._index)
+    if pygame.joystick.get_count() <= self._index:
+      logging.error("You need %d physical controller(s) connected" % (self._index + 1))
       exit(1)
     self._joystick = pygame.joystick.Joystick(self._index)
     self._joystick.init()
